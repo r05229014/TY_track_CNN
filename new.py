@@ -19,7 +19,7 @@ from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_a
 def rgb2gray(rgb):
     return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
 
-def load_data():
+def load_data(flag):
     #  part1  read .xlsx data
     df = pd.read_excel('./1958至今發警報颱風.xlsx') 
     df['filter'] = pd.Series(np.ones(df.shape[0]))
@@ -72,6 +72,15 @@ def load_data():
     X = X.reshape(X.shape[0], X.shape[1], X.shape[2], 1)
     y = np.array(use_label)
     
+	# if flag == 'westgo'
+    west = [1,2,3,4,5]
+    if flag == 'westgo':
+        for i in range(len(y)):
+            if y[i] in west:
+                y[i] = 0
+            else:
+                y[i] = 1
+
     X = X.astype('float32')
     X /= 255
     y = keras.utils.to_categorical(y, 10)
@@ -115,8 +124,8 @@ def CNN(img_rows, img_cols):
     return model
 
 if __name__ == '__main__':
-
-    X_train, X_test, y_train, y_test= load_data()
+    flag = 'westgo'
+    X_train, X_test, y_train, y_test= load_data(flag)
 
     # hyperparameter
     BATCH_SIZE = 12
